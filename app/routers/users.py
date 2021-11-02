@@ -15,7 +15,13 @@ router = APIRouter(
 async def create_user(request: schema.User,response: Response, db: Session = Depends(database.get_db)):
     try:
         hashedPassword = Hash.bcrypt(request.password)
-        new_user = models.User(username = request.username, email = request.email, password = hashedPassword)
+        new_user = models.User(
+            username = request.username,
+            first_name = request.first_name,
+            last_name = request.last_name ,
+            date_of_birth = request.date_of_birth , 
+            email = request.email, password = hashedPassword
+        )
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
