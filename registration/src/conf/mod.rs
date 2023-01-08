@@ -11,9 +11,8 @@ use tracing_subscriber::EnvFilter;
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub host: String,
-    pub port: i32,
+    pub port: String,
     pub database_url: String,
-    pub secret_key: String
 }
 
 impl Config {
@@ -23,8 +22,6 @@ impl Config {
         tracing_subscriber::fmt()
             .with_env_filter(EnvFilter::from_default_env())
             .init();
-        info!("Loading configuration");
-        
         let mut c = config::Config::new();
         c.merge(config::Environment::default())?;
         c.try_into()

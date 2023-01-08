@@ -9,13 +9,13 @@ pub struct CryptoService {
 }
 
 impl CryptoService {
-    pub fn hash_password(&self, password: String) -> Result<String> {
-        Hasher::default()
-            .with_secret_key(&*self.key)
-            .with_password(password)
-            .hash()
-            .map_err(|err| eyre!("Hahsing error: {}", err))
-    }
+    // pub fn hash_password(&self, password: String) -> Result<String> {
+    //     Hasher::default()
+    //         .with_secret_key(&*self.key)
+    //         .with_password(password)
+    //         .hash()
+    //         .map_err(|err| eyre!("Hahsing error: {}", err))
+    // }
 
     pub fn crypto_service(key:String) -> Self {
         Self {

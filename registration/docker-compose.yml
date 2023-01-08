@@ -5,9 +5,10 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=registration
+      - POSTGRES_PASSWORD=simong
+      - POSTGRES_DB=registration
     ports:
-      - 8080:8080
+      - '5416:5432'
     volumes: 
       - db:/var/lib/postgresql/data
 
