@@ -1,11 +1,9 @@
-pub mod crypto;
-
 use dotenv::dotenv;
 use serde::Deserialize;
 use eyre::WrapErr;
 use color_eyre::Result;
-use tracing::{info, instrument};
 use tracing_subscriber::EnvFilter;
+use tracing;
 
 
 #[derive(Debug, Deserialize)]
@@ -16,7 +14,7 @@ pub struct Config {
 }
 
 impl Config {
-    #[instrument]
+    #[tracing::instrument]
     pub fn from_env() -> Result<Config> {
         dotenv().ok();
         tracing_subscriber::fmt()
@@ -24,8 +22,7 @@ impl Config {
             .init();
         let mut c = config::Config::new();
         c.merge(config::Environment::default())?;
-        c.try_into()
-            .context("config from env")
+        c.try_into().context("config from env")
     }
 
 }

@@ -8,36 +8,27 @@ extern crate diesel;
 // #[macro_use]
 // extern crate validator_derive;
 
-
 use crate::conf::Config;
 use crate::db::Db;
 
-
-use actix_web::{web, App, HttpResponse, HttpServer, Result, http};  
+use actix_web::{web, App,HttpServer};  
 use actix_web::middleware::Logger;
-use serde::{Deserialize, Serialize};
-use tracing::{info};
-use tracing_subscriber::EnvFilter;
+use tracing;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let config = Config::from_env()
-        .expect("Server configuration not set");
+    let config = Config::from_env().expect("Server configuration not set");
     let db = Db::establish_connection().await;   
-    info!("Starting server at http://{}:{}", config.host, config.port);
+    tracing::info!(
+        "Starting server at http://{}:{}", config.host, config.port
+    );
+    
     HttpServer::new(move || {
-        // let cors = Cors::default()
-        //     .allowed_origin("http://localhost:8000")
-        //     .allowed_origin("http://localhost:3000")
-        //     .allowed_methods(vec!["GET", "POST"])
-        //     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
-        //     .allowed_header(http::header::CONTENT_TYPE)
-        //     .max_age(3600);
         App::new()
-            // .wrap(cors)
             .wrap(Logger::default())
             .app_data(web::Data::new(db.pool.clone()))
-            // .service(login::create_user)
+            .service(routes::get_users::get_all_users)
+            // .configure(f)
     })
     .bind(format!("{}:{}", config.host, config.port))?
     .run()
