@@ -15,6 +15,10 @@ use actix_web::{web, App,HttpServer};
 use actix_web::middleware::Logger;
 use tracing;
 
+fn routes(cfg: &mut web::ServiceConfig) {
+    cfg.service(routes::get_users::get_all_users);
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let config = Config::from_env().expect("Server configuration not set");
@@ -27,8 +31,8 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Logger::default())
             .app_data(web::Data::new(db.pool.clone()))
-            .service(routes::get_users::get_all_users)
-            // .configure(f)
+            // .service(routes::get_users::get_all_users)
+            .configure(routes)
     })
     .bind(format!("{}:{}", config.host, config.port))?
     .run()

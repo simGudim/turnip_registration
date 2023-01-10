@@ -1,8 +1,15 @@
 use crate::db::{Db, PgPooledConnection};
-use actix_web::{HttpResponse, Result, get};
+use actix_web::{HttpResponse, Result, post};
 
-#[get("/users")]
-pub async fn get_all_users(pool: PgPooledConnection) -> Result<HttpResponse> {
+
+struct IncomingRequest {
+    username: String
+}
+
+type Request = web::Json<IncomingRequest>;
+
+#[post("/user")]
+pub async fn insert_user(pool: PgPooledConnection, request: Request) -> Result<HttpResponse> {
     let users = Db::get_users(pool).await;
     if !users.is_empty() {
         Ok(HttpResponse::Ok()

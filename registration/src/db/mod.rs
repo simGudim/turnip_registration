@@ -3,7 +3,7 @@ pub mod schema;
 
 
 use models::User;
-
+use actix_web::web;
 use diesel::{
     Connection, 
     ExpressionMethods,
@@ -24,7 +24,7 @@ use tracing;
 // use chrono::Utc;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
-pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
+pub type PgPooledConnection = web::Data<PgPool>;
 
 #[derive(Clone)]
 pub struct Db {
@@ -45,20 +45,23 @@ impl Db {
         db    
     }
 
-    pub async fn get_user_by_username(user_name: &String, conn: &mut PgPooledConnection) -> Option<User> {
+    pub async fn get_user_by_username(user_name: &String, pool: web::Data<PgPool>) -> Option<User> {
         use self::schema::users::dsl::*;
+
+        let mut conn = pool.get().expect("couldn't get db connection from pool");
         let mut items = users
             .filter(username.eq(user_name))
-            .load::<models::User>(conn)
+            .load::<models::User>(&mut conn)
             .expect("Error getting the user by username");
         items.pop()
     }
 
-    pub async fn get_users(conn: &mut PgPooledConnection) -> Vec<User> {
+    pub async fn get_users(pool: web::Data<PgPool>) -> Vec<User> {
         use self::schema::users::dsl::*;
+        let mut conn = pool.get().expect("couldn't get db connection from pool");
         let items = users
             .order(id.asc())
-            .load::<models::User>(conn)
+            .load::<models::User>(&mut conn)
             .expect("Error loading devices");
         items
     }

@@ -20,9 +20,8 @@ impl Config {
         tracing_subscriber::fmt()
             .with_env_filter(EnvFilter::from_default_env())
             .init();
-        let mut c = config::Config::new();
-        c.merge(config::Environment::default())?;
-        c.try_into().context("config from env")
+        let mut config = config::Config::new();
+        config.merge(config::Environment::default())?;
+        config.try_into().context("config from env")
     }
-
 }
