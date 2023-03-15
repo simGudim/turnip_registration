@@ -1,6 +1,9 @@
 mod conf;
 mod routes;
 mod db;
+mod utils;
+#[cfg(test)]
+mod intergration_tests;
 
 // extern crate crypto;
 #[macro_use]
@@ -16,7 +19,8 @@ use actix_web::middleware::Logger;
 use tracing;
 
 fn routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(routes::get_users::get_all_users);
+    cfg.service(routes::get_users::get_all_users)
+        .service(routes::insert_user::insert_user);
 }
 
 #[actix_web::main]

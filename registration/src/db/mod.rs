@@ -1,8 +1,6 @@
 pub mod models;
 pub mod schema;
 
-
-use models::User;
 use actix_web::web;
 use diesel::{
     Connection, 
@@ -14,9 +12,9 @@ use diesel::{
 };
 use diesel::r2d2::{ 
     Pool, 
-    PooledConnection, 
     ConnectionManager
 };
+use models::User;
 use std::env;
 use tracing;
 // use failure::Error;
@@ -45,7 +43,7 @@ impl Db {
         db    
     }
 
-    pub async fn get_user_by_username(user_name: &String, pool: web::Data<PgPool>) -> Option<User> {
+    pub async fn get_user_by_username(user_name: &String, pool: PgPooledConnection) -> Option<User> {
         use self::schema::users::dsl::*;
 
         let mut conn = pool.get().expect("couldn't get db connection from pool");
@@ -56,7 +54,7 @@ impl Db {
         items.pop()
     }
 
-    pub async fn get_users(pool: web::Data<PgPool>) -> Vec<User> {
+    pub async fn get_all_users(pool: PgPooledConnection) -> Vec<User> {
         use self::schema::users::dsl::*;
         let mut conn = pool.get().expect("couldn't get db connection from pool");
         let items = users
@@ -64,6 +62,17 @@ impl Db {
             .load::<models::User>(&mut conn)
             .expect("Error loading devices");
         items
+    }
+    
+    pub async fn insert_user(pool: PgPooledConnection, user: &User) -> bool {
+        use self::schema::users::dsl::*;
+        let mut conn = pool.get().expect("couldn't get db connection from pool");
+        let inserted_user :Vec<User>= diesel::insert_into(users)
+            .values(user)
+            .load(&mut conn)
+            .expect("error inserting a user");
+        tracing::debug!("{:?}", inserted_user);
+        true
     }
 }
 
