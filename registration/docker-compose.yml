@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  postgres_db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=simong
+      - POSTGRES_DB=registration
+    ports:
+      - '5416:5432'
+    volumes: 
+      - postgres_db:/var/lib/postgresql/data
+
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile.migration
+    volumes:
+      - ./migrations:/app/migrations
+    depends_on:
+      - postgres_db
+
+  registration_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - "2001:2001"
+    depends_on: 
+      - postgres_db
+      - migration
+    volumes:
+      - ./src:/app/src
+
+volumes:
+  postgres_db:
+    driver: local
+

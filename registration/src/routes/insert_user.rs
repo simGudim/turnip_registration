@@ -10,13 +10,14 @@ pub struct IncomingRequest {
 impl IncomingRequest {
     fn validate(&self) -> User {
         User {
-            id : None,
+            user_id : None,
             username : self.username.clone()
         }
     }
 }
 
 type Request = web::Json<IncomingRequest>;
+
 
 #[post("/user")]
 pub async fn insert_user(pool: PgPooledConnection, request: Request) -> Result<HttpResponse> {

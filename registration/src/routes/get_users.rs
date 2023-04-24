@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 use crate::db::{Db, PgPooledConnection};
 use crate::utils;
 use actix_web::{HttpResponse, Result, get};

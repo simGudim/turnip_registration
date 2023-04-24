@@ -1,0 +1,11 @@
+FROM rust:1.67
+
+WORKDIR /app
+
+COPY ./migrations /app/migrations
+COPY ./scripts/run_migrations.sh /app/run_migrations.sh
+
+RUN cargo install diesel_cli --no-default-features --features postgres
+EXPOSE 5416
+
+ENTRYPOINT ["bash", "run_migrations.sh"]

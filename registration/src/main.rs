@@ -11,6 +11,7 @@ extern crate diesel;
 // #[macro_use]
 // extern crate validator_derive;
 
+
 use crate::conf::Config;
 use crate::db::Db;
 
@@ -41,6 +42,5 @@ async fn main() -> std::io::Result<()> {
     .bind(format!("{}:{}", config.host, config.port))?
     .run()
     .await?;
-    
     Ok(())
 }

@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 pub mod models;
 pub mod schema;
 
@@ -33,6 +34,7 @@ impl Db {
     #[tracing::instrument]
     pub async fn establish_connection() -> Self {
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+        eprintln!("established connection to {}", &database_url);
         PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url));
 
         let manager = ConnectionManager::<PgConnection>::new(database_url);
@@ -58,7 +60,7 @@ impl Db {
         use self::schema::users::dsl::*;
         let mut conn = pool.get().expect("couldn't get db connection from pool");
         let items = users
-            .order(id.asc())
+            .order(user_id.asc())
             .load::<models::User>(&mut conn)
             .expect("Error loading devices");
         items
