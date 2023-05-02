@@ -3,11 +3,23 @@ pipeline {
   tools { 
         maven 'Maven_3_5_2'  
     }
-   stages{
-    stage('CompileandRunSonarAnalysis') {
-            steps {	
-		sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=turnip_registration -Dsonar.organization=simGudim -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=7927f50bd5eafaba6d65a967c3d9c2a317c01c3b'
-			}
-        } 
-  }
+	stage('Build') { 
+            steps { 
+               withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
+                 script{
+                 app =  docker.build("turnip/turnip_registration:1.0")
+                 }
+               }
+            }
+    }
+
+	stage('Push') {
+            steps {
+                script{
+                    docker.withRegistry('https://676180064909.dkr.ecr.ca-central-1.amazonaws.com/turnip', 'ecr:ca-central-1:aws-credentials') {
+                    app.push("latest")
+                    }
+                }
+            }
+    	}
 }
