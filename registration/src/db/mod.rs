@@ -17,7 +17,6 @@ use diesel::r2d2::{
 };
 use models::User;
 use std::env;
-use tracing;
 // use failure::Error;
 // use diesel::QueryResult;
 // use chrono::Utc;
@@ -31,7 +30,6 @@ pub struct Db {
 }
 
 impl Db {
-    #[tracing::instrument]
     pub async fn establish_connection() -> Self {
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
         eprintln!("established connection to {}", &database_url);

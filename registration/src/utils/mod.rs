@@ -3,6 +3,7 @@
 use tracing;
 use serde_json::Value;
 
+// this fucntion sets the logging level and size of the log
 
 pub fn log_success(mut info: Value)  {
     let info_object = info.as_object_mut().expect("invalid log value");
