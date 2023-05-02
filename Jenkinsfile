@@ -9,7 +9,7 @@ pipeline {
                 steps { 
                 withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
                     script{
-                        app = sh "docker build -t turnip/turnip_registration:1.0 -f registration/Dockerfile"
+                        app = sh "docker build turnip/turnip_registration:1.0 -f registration/Dockerfile"
                     }
                 }
                 }
